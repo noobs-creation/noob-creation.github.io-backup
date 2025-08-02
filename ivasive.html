@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Very Important Question</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Lobster&display=swap');
+
+        :root {
+            --bg-color-1: #ff9a9e;
+            --bg-color-2: #fecfef;
+            --bg-color-3: #a1c4fd;
+            --bg-color-4: #c2e9fb;
+            --primary-text: #833ab4;
+            --yes-btn-bg: #4CAF50;
+            --no-btn-bg: #f44336;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Fredoka One', cursive;
+            background: linear-gradient(-45deg, var(--bg-color-1), var(--bg-color-2), var(--bg-color-3), var(--bg-color-4));
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        #main-content img {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-family: 'Lobster', cursive;
+            font-size: 3rem;
+            color: var(--primary-text);
+            text-shadow: 3px 3px 0px rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        button {
+            padding: 15px 35px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        #yesBtn {
+            background-color: var(--yes-btn-bg);
+            color: white;
+        }
+
+        #noBtn {
+            background-color: var(--no-btn-bg);
+            color: white;
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        #yesBtn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        /* This class will now correctly hide the element */
+        .hidden {
+            display: none;
+        }
+        
+        #celebration {
+            text-align: center;
+        }
+        
+        #celebration img {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Content: Initially Visible -->
+    <div id="main-content" class="container">
+        <img src="https://media.tenor.com/E_1gSA823zAAAAAi/quby-pentol.gif" alt="Cute character asking">
+        <h1>Will you go on a coffee date with me?</h1>
+        <div class="buttons">
+            <button id="yesBtn">Yes!</button>
+        </div>
+        <!-- No button is outside the flex container to allow absolute positioning freely -->
+        <button id="noBtn">No</button>
+    </div>
+    
+    <!-- Celebration Content: Initially Hidden -->
+    <div id="celebration" class="container hidden">
+        <h1>Wooohooo! It's a date! 🎉</h1>
+        <img src="https://media.tenor.com/p8d_2qNq9_sAAAAi/peach-goma.gif" alt="Happy characters celebrating">
+    </div>
+
+    <!-- Confetti library for the celebration effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const mainContent = document.getElementById('main-content');
+        const celebrationContent = document.getElementById('celebration');
+
+        // Function to set initial position of No button
+        function setInitialNoBtnPosition() {
+            const yesBtnRect = yesBtn.getBoundingClientRect();
+            noBtn.style.position = 'absolute'; // Ensure it's absolute
+            noBtn.style.left = yesBtnRect.right + 20 + 'px'; // Position it right of the Yes button
+            noBtn.style.top = yesBtnRect.top + 'px';
+        }
+
+        // Move the "No" button to a random position
+        function moveButton() {
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const buttonWidth = noBtn.offsetWidth;
+            const buttonHeight = noBtn.offsetHeight;
+
+            let newLeft = Math.random() * (viewportWidth - buttonWidth);
+            let newTop = Math.random() * (viewportHeight - buttonHeight);
+
+            // Ensure the button doesn't go off-screen
+            newLeft = Math.max(0, Math.min(newLeft, viewportWidth - buttonWidth));
+            newTop = Math.max(0, Math.min(newTop, viewportHeight - buttonHeight));
+            
+            noBtn.style.left = `${newLeft}px`;
+            noBtn.style.top = `${newTop}px`;
+        }
+        
+        // --- Event Listeners ---
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('click', moveButton); // For touch devices
+
+        // Handle the "Yes" button click for the celebration
+        yesBtn.addEventListener('click', () => {
+            mainContent.classList.add('hidden');
+            noBtn.classList.add('hidden'); // Also hide the 'No' button
+            celebrationContent.classList.remove('hidden');
+
+            // --- Trigger a massive celebration ---
+            
+            // 1. Realistic look confetti
+            function realisticConfetti() {
+                const count = 200;
+                const defaults = { origin: { y: 0.7 } };
+
+                function fire(particleRatio, opts) {
+                    confetti(Object.assign({}, defaults, opts, {
+                        particleCount: Math.floor(count * particleRatio)
+                    }));
+                }
+
+                fire(0.25, { spread: 26, startVelocity: 55 });
+                fire(0.2, { spread: 60 });
+                fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+                fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+                fire(0.1, { spread: 120, startVelocity: 45 });
+            }
+            
+            // 2. Continuous fireworks
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+
+            const interval = setInterval(() => {
+                if (Date.now() > animationEnd) {
+                    return clearInterval(interval);
+                }
+                confetti({
+                    startVelocity: 30,
+                    spread: 360,
+                    ticks: 60,
+                    origin: {
+                        x: Math.random(),
+                        y: Math.random() - 0.2
+                    }
+                });
+            }, 250);
+
+            // Run the realistic confetti burst at the start
+            realisticConfetti();
+        });
+
+        // Set the initial position of the 'No' button after the page loads
+        window.addEventListener('load', setInitialNoBtnPosition);
+        window.addEventListener('resize', setInitialNoBtnPosition); // Adjust if window is resized
+
+    </script>
+
+</body>
+</html>
