@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #333;
+            color: #fff;
+        }
+
+        #game-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #chess-board {
+            width: 640px;
+            height: 640px;
+            display: grid;
+            grid-template-columns: repeat(8, 80px);
+            grid-template-rows: repeat(8, 80px);
+            border: 5px solid #603813;
+        }
+
+        .square {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .light {
+            background-color: #f0d9b5;
+        }
+
+        .dark {
+            background-color: #b58863;
+        }
+        
+        .piece {
+            cursor: pointer;
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10+ */
+            user-select: none; /* Standard syntax */
+        }
+        
+        .selected {
+            background-color: #6495ed80 !important; /* A semi-transparent blue */
+        }
+
+        .valid-move::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #90ee9080; /* Light green circle for valid moves */
+            border-radius: 50%;
+        }
+
+        #game-info {
+            text-align: center;
+            font-size: 24px;
+        }
+        
+        #status-text {
+            font-weight: bold;
+            height: 30px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Chess</h1>
+    <div id="game-container">
+        <div id="chess-board"></div>
+        <div id="game-info">
+            <div id="status-text">White's Turn</div>
+            <button id="reset-button">New Game</button>
+        </div>
+    </div>
+    
+    <!-- The JavaScript file is imported here -->
+    <script src="chess-js.js"></script>
+</body>
+</html>

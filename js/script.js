@@ -1,7 +1,7 @@
 let input = document.querySelector("input");
 let terminalBody = document.querySelector("#terminalBody");
 
-let commandList = ['Bio', 'clear', 'echo', 'Github', 'name', 'projects', 'resume', 'socials', 'ivasive-no-button - not working yet'];
+let commandList = ['Bio', 'clear', 'echo', 'Github', 'name', 'projects', 'resume', 'socials', 'chess-game', 'dino-game', 'ivasive-no-button - not working yet'];
 
 functionCalls();
 
@@ -58,6 +58,8 @@ function checkCommand(inputCommand){
         else if(command === 'Github'){ commandGithub(command)}
         else if(command === 'help'){ commandHelp();}
         else if(command === 'resume'){ commandResume();}
+        else if(command === 'chess-game'){ executeChessGame();}
+        else if(command === 'dino-game'){ commandDinoGame();} // Added new command check
         else if(command === 'ivasive-no-button'){ commandIvasiveButton();} // Added new command check
         else if(commandList.includes(command)){ executeCommand(command);}
         else{
@@ -68,6 +70,7 @@ function checkCommand(inputCommand){
         terminalBody.innerHTML += '<br>';
     }
 }
+//hello
 
 function addInput() {
     terminalBody.innerHTML += ' > <input type="text" autofocus />';
@@ -114,3 +117,17 @@ function commandIvasiveButton() {
 }
 // uncomment this function to enable the new page redirection
 
+function commandDinoGame() {
+    terminalBody.innerHTML += '<br>Redirecting to new page...<br>';
+    setTimeout(function() {
+        window.location.href = 'dino-game.html';
+    }, 1000);
+
+}
+
+function executeChessGame() {
+    terminalBody.innerHTML += '<br>Redirecting to chess game...<br>';
+    setTimeout(function() {
+        window.location.href = 'chess-game.html';
+    }, 1000);
+}

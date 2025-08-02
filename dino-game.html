@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dino Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to bottom, #87CEEB, #f0f8ff);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        #game-board {
+            border: 5px solid #333;
+            position: relative;
+            width: 800px;
+            height: 300px;
+            background-color: #f7f7f7;
+            overflow: hidden;
+        }
+        #dino {
+            position: absolute;
+            bottom: 0;
+            left: 50px;
+            width: 60px;
+            height: 60px;
+            background-color: #ff6347; /* Cheerful coral color */
+            border-radius: 10px;
+        }
+        .jump {
+            animation: jump-animation 600ms ease-out;
+        }
+        @keyframes jump-animation {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-120px); }
+            100% { transform: translateY(0); }
+        }
+        .obstacle {
+            position: absolute;
+            bottom: 0;
+            width: 30px;
+            height: 60px;
+            background-color: #228B22; /* Forest green */
+        }
+        #score {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+        #game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: #ff0000;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-board">
+    <div id="dino"></div>
+    <div id="score">Score: 0</div>
+    <div id="game-over">Game Over</div>
+</div>
+
+<script>
+    const dino = document.getElementById('dino');
+    const gameBoard = document.getElementById('game-board');
+    const scoreDisplay = document.getElementById('score');
+    const gameOverDisplay = document.getElementById('game-over');
+
+    let isJumping = false;
+    let score = 0;
+    let isGameOver = false;
+
+    // --- JUMP LOGIC ---
+    document.addEventListener('keydown', function(event) {
+        if (event.code === 'Space' && !isJumping && !isGameOver) {
+            jump();
+        }
+    });
+
+    function jump() {
+        isJumping = true;
+        dino.classList.add('jump');
+    }
+
+    dino.addEventListener('animationend', () => {
+        isJumping = false;
+        dino.classList.remove('jump');
+    });
+
+    // --- GAME LOGIC ---
+
+    // The main game loop controller
+    function obstacleManager() {
+        if (isGameOver) return;
+
+        let gameSpeed;
+        let spawnInterval;
+
+        // Adjust difficulty based on score
+        if (score >= 20) {
+            // Level 3: VERY HARD
+            gameSpeed = 12; // Obstacles move very fast
+            spawnInterval = Math.random() * 600 + 1000; // Spawn every 1.0s - 1.6s
+        } else if (score >= 10) {
+            // Level 2: HARD
+            gameSpeed = 16; // Obstacles move faster
+            spawnInterval = Math.random() * 600 + 1400; // Spawn every 1.4s - 2.0s
+        } else {
+            // Level 1: NORMAL
+            gameSpeed = 20; // Normal obstacle speed
+            spawnInterval = Math.random() * 700 + 1800; // Spawn every 1.8s - 2.5s
+        }
+
+        // Create a new obstacle with the current speed and schedule the next one
+        createObstacle(gameSpeed);
+        setTimeout(obstacleManager, spawnInterval);
+    }
+
+    // Creates a single obstacle with a given speed
+    function createObstacle(speed) {
+        if (isGameOver) return;
+
+        const obstacle = document.createElement('div');
+        obstacle.classList.add('obstacle');
+        obstacle.style.left = '770px';
+        gameBoard.appendChild(obstacle);
+
+        let obstaclePosition = 770;
+        const obstacleInterval = setInterval(() => {
+            if (isGameOver) {
+                clearInterval(obstacleInterval);
+                return;
+            }
+
+            obstaclePosition -= 10;
+            obstacle.style.left = obstaclePosition + 'px';
+
+            // Check for collision
+            if (obstaclePosition > 50 && obstaclePosition < 110 && !isJumping) {
+                gameOver();
+                clearInterval(obstacleInterval);
+            }
+
+            // Remove obstacle and update score
+            if (obstaclePosition < -30) {
+                clearInterval(obstacleInterval);
+                obstacle.remove();
+                if (!isGameOver) {
+                    score++;
+                    scoreDisplay.textContent = 'Score: ' + score;
+                }
+            }
+        }, speed); // The speed of the obstacle is controlled here
+    }
+
+    function gameOver() {
+        isGameOver = true;
+        gameOverDisplay.style.display = 'block';
+    }
+
+    // Start the game by calling the manager for the first time
+    obstacleManager();
+</script>
+
+</body>
+</html>
